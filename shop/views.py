@@ -34,7 +34,7 @@ def category_list(request):
 def category_detail(request, slug):
     category = get_object_or_404(Category, slug=slug, is_active=True)
     products = category.products.filter(is_active=True)
-    return render(request, 'shop/category_list.html', {
+    return render(request, 'shop/product_list.html', {
         'category': category,
         'products': products,
         'breadcrumbs': [

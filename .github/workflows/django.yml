@@ -1,15 +1,29 @@
 name: Django CI
-
+#on - триггеры
 on:
   push:
     branches: ["main"]
-    pull_request:
-      branches: ["main"]
-
+  pull_request:
+    branches: ["main"]
+# jobs
 jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5s
     steps:
       - name: Checkout code
         uses: actions/checkout@v3  # копируем в облако GitHub
@@ -18,12 +32,36 @@ jobs:
         uses: actions/setup-python@v3 # устанавливаем питон
         with:
           python-version: '3.13'
+      - name: Cache pip packeges
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache.pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Set up Dependencies
         run:
           pip install -r requirements.txt
 
+      - name: Run migrations
+        run: |
+          python manage.py migrate
+        env:
+          DB_NAME: test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DEBUG: 'False'
 
       - name: Run Tests
         run:
           python manage.py test # запуск тестов
+        env:
+          DB_NAME: test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DEBUG: 'False'
