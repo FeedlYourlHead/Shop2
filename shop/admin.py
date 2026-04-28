@@ -4,6 +4,7 @@ from django.utils.safestring import  mark_safe
 from .models import Category, Product, ProductImage
 from .forms import ExcelImportForm
 
+
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
@@ -14,8 +15,8 @@ class ProductImageInline(admin.TabularInline):
         if obj.image:
             return mark_safe(f'<img src="{obj.image.url}" width="150" />')
         return ''
-
     image_preview.short_description = 'Превью'
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -24,16 +25,19 @@ class CategoryAdmin(admin.ModelAdmin):
     list_filter = ('is_active',)
     search_fields = ('name',)
 
+
 class ProductImageAdmin(admin.ModelAdmin):
     list_display = ('product', 'image_preview', 'is_main')
+
     def image_preview(self, obj):
         if obj.image:
             return mark_safe(f'<img src="{obj.image.url}" width="100" />')
         return ''
-
     image_preview.short_description = 'Превью'
 
+
 admin.site.register(ProductImage, ProductImageAdmin)
+
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
