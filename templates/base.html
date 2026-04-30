@@ -25,7 +25,22 @@
         </div>
     </header>
 
+
     <main class="container" style="padding-top: 40px; min-height: 80vh;">
+            {% if breadcrumbs %}
+            <nav clas="breadcrumbs">
+                {% for crumb in breadcrumbs %}
+                    {% if not forloop.last %}
+                    <a href="{{ crumb.url }}" style="color: var(--primary-color)">
+                        {{ crumb.title }}
+                    </a>
+                    <span>/</span>
+                {% else %}
+                    <span>{{ crumb.title }}</span>
+                    {% endif %}
+                {% endfor %}
+            </nav>
+            {% endif %}
         {% if messages %}
             {% for message in messages %}
                 <div class="message {{ message.tags }}">{{ message }}</div>

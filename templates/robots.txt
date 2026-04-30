@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /cart/
+Disallow: /orders
+Disallow: /media/
+Allow: /media/products/2026/04/28
+Crawl-delay: 5
+Clean-param:
+Sitemap: http://127.0.0.1:8000/sitemap.xml
